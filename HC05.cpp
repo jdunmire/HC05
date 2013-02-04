@@ -1,6 +1,5 @@
 #include <Arduino.h>
 #include <HC05.h>
-#include <SoftwareSerial.h>
 
 HC05::HC05(int pin, int rx, int tx):_btSerial(rx,tx)
 {
