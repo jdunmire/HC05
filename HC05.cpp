@@ -1,7 +1,12 @@
 #include <Arduino.h>
 #include <HC05.h>
 
+#ifdef DEBUG_HC05
 HC05::HC05(int pin, int rx, int tx):_btSerial(rx,tx)
+#else
+#define _btSerial Serial
+HC05::HC05(int pin, int rx, int tx)
+#endif
 {
   pinMode(pin, OUTPUT);
   _cmdPin = pin;
@@ -19,28 +24,28 @@ unsigned long HC05::findBaud()
   char buffer[16];
 
   digitalWrite(_cmdPin, HIGH);
-  Serial.begin(9600);
+  DEBUG_BEGIN(9600);
 
   for(int rn = 0; rn < numRates; rn++)
   {
     _btSerial.begin(rates[rn]);
     _btSerial.setTimeout(100);
-    Serial.write("\r\nTrying ");
-    Serial.print(rn);
-    Serial.write(", ");
-    Serial.print(rates[rn]);
+    DEBUG_WRITE("\r\nTrying ");
+    DEBUG_PRINT(rn);
+    DEBUG_WRITE(", ");
+    DEBUG_PRINT(rates[rn]);
     _btSerial.write("AT\r\n");
     recvd = _btSerial.readBytes(buffer,16);
     if (recvd > 0)
     {
-      Serial.write("Found\r\n");
-      Serial.write((uint8_t *)buffer,recvd);
+      DEBUG_WRITE("Found\r\n");
+      DEBUG_WRITE((uint8_t *)buffer,recvd);
       // FIXME: refactor to a single return
       digitalWrite(_cmdPin, LOW);
       return(rates[rn]);
     }
   }
-  Serial.write("\r\nNo connection\r\n");
+  DEBUG_WRITE("\r\nNo connection\r\n");
   digitalWrite(_cmdPin, LOW);
   return(0);
 }
@@ -54,8 +59,8 @@ int HC05::cmd(const char* cmd)
   _btSerial.write("\r\n");
   _btSerial.setTimeout(100);
   recvd = _btSerial.readBytes(buffer,16);
-  Serial.println(recvd);
-  Serial.write((uint8_t *)buffer,recvd);
+  DEBUG_PRINTLN(recvd);
+  DEBUG_WRITE((uint8_t *)buffer,recvd);
   digitalWrite(_cmdPin, LOW);
   return((buffer[0] == 'O' && buffer[1] == 'K'));
 }
