@@ -27,7 +27,7 @@ unsigned long HC05::findBaud()
   int numRates = sizeof(rates)/sizeof(unsigned long);
   int response = false;
   int recvd = 0;
-  char buffer[32];
+  char buffer[128];
 
   DEBUG_PRINTLN("findBaud");
   digitalWrite(_cmdPin, HIGH);
@@ -40,7 +40,7 @@ unsigned long HC05::findBaud()
     DEBUG_PRINT(rates[rn]);
     DEBUG_WRITE("... ");
     _btSerial.write("AT\r\n");
-    recvd = _btSerial.readBytes(buffer,32);
+    recvd = _btSerial.readBytes(buffer,128);
     if (recvd > 0)
     {
       DEBUG_PRINTLN("Found.");
@@ -61,31 +61,37 @@ unsigned long HC05::findBaud()
 int HC05::cmd(const char* cmd)
 {
   int recvd = 0;
-  char buffer[32];
+  // TODO: Combine buffers so that there is just one
+  char buffer[128];
   DEBUG_PRINTLN(cmd);
   digitalWrite(_cmdPin, HIGH);
   delay(100);
   _btSerial.write(cmd);
   _btSerial.write("\r\n");
   _btSerial.setTimeout(100);
-  do {
-      recvd = _btSerial.readBytesUntil('\n',buffer,32);
-      if (recvd > 0)
-      {
-          DEBUG_PRINTLN(recvd);
-          DEBUG_PRINTLN((unsigned char)(buffer[recvd-1]),HEX);
-          DEBUG_WRITE((uint8_t *)buffer,recvd);
-      }
-  } while ((recvd > 0) && (buffer[0] != 'O' || buffer[1] != 'K'));
-  //recvd = _btSerial.readBytes(buffer,32);
+  recvd = _btSerial.readBytesUntil('\n',buffer,128);
+  if (recvd > 0)
+  {
+      DEBUG_WRITE((uint8_t *)buffer,recvd);
+      DEBUG_WRITE('\n');
+  }
+  else
+  {
+      DEBUG_PRINTLN("timeout");
+  }
   digitalWrite(_cmdPin, LOW);
   return((buffer[0] == 'O' && buffer[1] == 'K'));
 }
 
+/*
+ * If setBaud() is called while the HC-05 is connected, then
+ * it will be disconnected when the AT+RESET command is issued, and
+ * it may take 2 (or more?) connection attempts to reconnect.
+ */
 void HC05::setBaud(unsigned long baud)
 {
   int recvd = 0;
-  char buffer[32];
+  char buffer[128];
   digitalWrite(_cmdPin, HIGH);
   delay(200);
   DEBUG_WRITE("AT+UART=");
@@ -94,10 +100,17 @@ void HC05::setBaud(unsigned long baud)
   _btSerial.print(baud);
   DEBUG_WRITE(",0,0\r\n");
   _btSerial.write(",0,0\r\n");
-  recvd = _btSerial.readBytes(buffer,32);
+  recvd = _btSerial.readBytes(buffer,128);
+  if (recvd > 0)
+  {
+      DEBUG_WRITE((uint8_t *)buffer,recvd);
+  }
+  else
+  {
+      DEBUG_PRINTLN("timeout");
+  }
   digitalWrite(_cmdPin, LOW);
   delay(100);
-  DEBUG_WRITE((uint8_t *)buffer,recvd);
   cmd("AT+RESET");
   _btSerial.begin(baud);
   delay(1000);
@@ -112,7 +125,12 @@ size_t HC05::write(uint8_t byte)
 {
   if (digitalRead(_statPin) != HIGH)
   {
-      DEBUG_PRINTLN("No Connection");
+      DEBUG_PRINT("No Connection, waiting...");
+      while (digitalRead(_statPin) == LOW)
+      {
+          delay(100);
+      }
+      DEBUG_PRINTLN("OK");
   }
   _btSerial.write(byte);
 }
