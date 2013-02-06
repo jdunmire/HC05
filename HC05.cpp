@@ -58,13 +58,18 @@ unsigned long HC05::findBaud()
   return(0);
 }
 
+// FIXME: some commands return multiple lines- check for OK or timeout
 int HC05::cmd(const char* cmd)
 {
   int recvd = 0;
   // TODO: Combine buffers so that there is just one
   char buffer[128];
+
   DEBUG_PRINTLN(cmd);
+
   digitalWrite(_cmdPin, HIGH);
+  // No spec for how long it takes to enter command mode, but 100ms
+  // seems to work- assuming the output has been drained.
   delay(100);
   _btSerial.write(cmd);
   _btSerial.write("\r\n");
@@ -80,13 +85,21 @@ int HC05::cmd(const char* cmd)
       DEBUG_PRINTLN("timeout");
   }
   digitalWrite(_cmdPin, LOW);
+
+  // Emperically determined that it takes some time to reliablly exit
+  // command mode. The appeared to be a baud rate dependency and with
+  // >100ms required at 9600 baud.
+  delay(150);
   return((buffer[0] == 'O' && buffer[1] == 'K'));
 }
+
 
 /*
  * If setBaud() is called while the HC-05 is connected, then
  * it will be disconnected when the AT+RESET command is issued, and
- * it may take 2 (or more?) connection attempts to reconnect.
+ * it may take 2 (or more?) connection attempts to reconnect. The extra
+ * connect attempts may be a host side issue and not specific to the
+ * HC-05 module.
  */
 void HC05::setBaud(unsigned long baud)
 {
@@ -116,13 +129,11 @@ void HC05::setBaud(unsigned long baud)
   delay(1000);
 }
 
-/*
- * The down side of this is that the status gets checked for every byte
- * written out which doesn't seem that efficient, but maybe it is
- * correct.
- */
+
 size_t HC05::write(uint8_t byte)
 {
+  // The down side of this check is that the status gets checked for
+  // every byte written out which doesn't seem that efficient.
   if (digitalRead(_statePin) != HIGH)
   {
       DEBUG_PRINT("No Connection, waiting...");
