@@ -4,7 +4,7 @@
  * Select hardware or software serial port:
  *   Define HC05_SOFTWARE_SERIAL to select a SoftwareSerial port, then
  *   initialize the HC05 class with three arguments:
- *     HC05(cmdPin, rxPin, txPin)
+ *     HC05(cmdPin, statePin rxPin, txPin)
  * or
  *   Specify an alternate hardware serial port by changing the
  *   HC05_HW_SERIAL_PORT define.
@@ -52,8 +52,8 @@
 class HC05 : public Print
 {
   public:
-    HC05(int cmdPin, int statPin);
-    HC05(int cmdPin, int statPin, uint8_t rx, uint8_t tx);
+    HC05(int cmdPin, int statePin);
+    HC05(int cmdPin, int statePin, uint8_t rx, uint8_t tx);
     unsigned long findBaud();
     int cmd(const char* cmd);
     void setBaud(unsigned long baud);
@@ -65,7 +65,7 @@ class HC05 : public Print
 
   private:
     int _cmdPin;
-    int _statPin;
+    int _statePin;
 };
 
 #endif

@@ -6,16 +6,16 @@ SoftwareSerial DEBUG_SW_PORT;
 #endif
 
 #ifdef HC05_SOFTWARE_SERIAL
-HC05::HC05(int cmdPin, int statPin, uint8_t rx, uint8_t tx):_btSerial(rx,tx,0)
+HC05::HC05(int cmdPin, int statePin, uint8_t rx, uint8_t tx):_btSerial(rx,tx,0)
 #else
 #define _btSerial HC05_HW_SERIAL_PORT
-HC05::HC05(int cmdPin, int statPin)
+HC05::HC05(int cmdPin, int statePin)
 #endif
 {
   pinMode(cmdPin, OUTPUT);
-  pinMode(statPin, INPUT);
+  pinMode(statePin, INPUT);
   _cmdPin = cmdPin;
-  _statPin = statPin;
+  _statePin = statePin;
 }
 
 static const unsigned long rates[] = {9600,19200,57600,115200,38400};
@@ -123,10 +123,10 @@ void HC05::setBaud(unsigned long baud)
  */
 size_t HC05::write(uint8_t byte)
 {
-  if (digitalRead(_statPin) != HIGH)
+  if (digitalRead(_statePin) != HIGH)
   {
       DEBUG_PRINT("No Connection, waiting...");
-      while (digitalRead(_statPin) == LOW)
+      while (digitalRead(_statePin) == LOW)
       {
           delay(100);
       }
