@@ -16,6 +16,7 @@ HC05::HC05(int cmdPin, int statePin)
   pinMode(statePin, INPUT);
   _cmdPin = cmdPin;
   _statePin = statePin;
+  _bufsize = sizeof(_buffer)/sizeof(char);
 }
 
 static const unsigned long rates[] = {9600,19200,57600,115200,38400};
@@ -27,7 +28,7 @@ unsigned long HC05::findBaud()
   int numRates = sizeof(rates)/sizeof(unsigned long);
   int response = false;
   int recvd = 0;
-  char buffer[128];
+  //char _buffer[128];
 
   DEBUG_PRINTLN("findBaud");
   digitalWrite(_cmdPin, HIGH);
@@ -40,7 +41,7 @@ unsigned long HC05::findBaud()
     DEBUG_PRINT(rates[rn]);
     DEBUG_WRITE("... ");
     _btSerial.write("AT\r\n");
-    recvd = _btSerial.readBytes(buffer,128);
+    recvd = _btSerial.readBytes(_buffer,_bufsize);
     if (recvd > 0)
     {
       DEBUG_PRINTLN("Found.");
@@ -58,13 +59,9 @@ unsigned long HC05::findBaud()
   return(0);
 }
 
-// FIXME: some commands return multiple lines- check for OK or timeout
 int HC05::cmd(const char* cmd)
 {
   int recvd = 0;
-  // TODO: Combine buffers so that there is just one
-  char buffer[128];
-
   DEBUG_PRINTLN(cmd);
 
   digitalWrite(_cmdPin, HIGH);
@@ -73,24 +70,28 @@ int HC05::cmd(const char* cmd)
   delay(100);
   _btSerial.write(cmd);
   _btSerial.write("\r\n");
-  _btSerial.setTimeout(100);
-  recvd = _btSerial.readBytesUntil('\n',buffer,128);
-  if (recvd > 0)
-  {
-      DEBUG_WRITE((uint8_t *)buffer,recvd);
-      DEBUG_WRITE('\n');
+  _btSerial.setTimeout(1000);
+  do {
+      recvd = _btSerial.readBytesUntil('\n',_buffer,_bufsize);
+      if (recvd > 0)
+      {
+          DEBUG_WRITE((uint8_t *)_buffer,recvd);
+          DEBUG_WRITE('\n');
+      }
+      else
+      {
+          DEBUG_PRINTLN("timeout");
+      }
   }
-  else
-  {
-      DEBUG_PRINTLN("timeout");
-  }
+  while ((recvd > 0) && (_buffer[0] != 'O' || _buffer[1] != 'K'));
+
   digitalWrite(_cmdPin, LOW);
 
   // Emperically determined that it takes some time to reliablly exit
   // command mode. The appeared to be a baud rate dependency and with
   // >100ms required at 9600 baud.
   delay(150);
-  return((buffer[0] == 'O' && buffer[1] == 'K'));
+  return((_buffer[0] == 'O' && _buffer[1] == 'K'));
 }
 
 
@@ -104,7 +105,6 @@ int HC05::cmd(const char* cmd)
 void HC05::setBaud(unsigned long baud)
 {
   int recvd = 0;
-  char buffer[128];
   digitalWrite(_cmdPin, HIGH);
   delay(200);
   DEBUG_WRITE("AT+UART=");
@@ -113,10 +113,10 @@ void HC05::setBaud(unsigned long baud)
   _btSerial.print(baud);
   DEBUG_WRITE(",0,0\r\n");
   _btSerial.write(",0,0\r\n");
-  recvd = _btSerial.readBytes(buffer,128);
+  recvd = _btSerial.readBytes(_buffer,_bufsize);
   if (recvd > 0)
   {
-      DEBUG_WRITE((uint8_t *)buffer,recvd);
+      DEBUG_WRITE((uint8_t *)_buffer,recvd);
   }
   else
   {

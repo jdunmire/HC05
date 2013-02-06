@@ -26,7 +26,7 @@
  * Optional macros, define as needed
  */
 #define HC05_SOFTWARE_SERIAL
-//#define DEBUG_HC05
+#define DEBUG_HC05
 //#define DEBUG_SW_PORT swserial(4,5)
 
 #ifdef DEBUG_HC05
@@ -66,6 +66,8 @@ class HC05 : public Print
   private:
     int _cmdPin;
     int _statePin;
+    int _bufsize;
+    char _buffer[128];
 };
 
 #endif

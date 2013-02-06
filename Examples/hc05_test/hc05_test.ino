@@ -65,7 +65,7 @@ void loop()
   for (int i = 0; true; i++)
   {
     delay(100);  // Allow output to drain before attempting command mode
-    myHC05.cmd("AT");
+    myHC05.cmd("AT+UART?");
     myHC05.print("got here: ");
     myHC05.println(i);
    // delay(1000);
