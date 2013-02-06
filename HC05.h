@@ -27,7 +27,6 @@
  */
 #define HC05_SOFTWARE_SERIAL
 #define DEBUG_HC05
-#define DEBUG_BAUD 19200
 //#define DEBUG_SW_PORT swserial(4,5)
 
 #ifdef DEBUG_HC05
