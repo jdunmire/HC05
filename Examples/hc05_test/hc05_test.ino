@@ -3,9 +3,9 @@
 #include <SoftwareSerial.h>
 
 #ifdef HC05_SOFTWARE_SERIAL
-HC05 myHC05 = HC05(3, 4, 5);
+HC05 myHC05 = HC05(3, 2, 4, 5);
 #else
-HC05 myHC05 = HC05(3);
+HC05 myHC05 = HC05(3, 2);
 #endif
 
 #ifdef DEBUG_HC05
@@ -77,6 +77,7 @@ void loop()
   {
     //myHC05.cmd("AT");
     myHC05.write("got here\r\n");
+    myHC05.write(i);
     delay(1000);
   }
   for (int i = 0; true; i++)

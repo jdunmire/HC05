@@ -6,17 +6,17 @@ SoftwareSerial DEBUG_SW_PORT;
 #endif
 
 #ifdef HC05_SOFTWARE_SERIAL
-HC05::HC05(int pin, int rx, int tx):_btSerial(rx,tx)
+HC05::HC05(int cmdPin, int statPin, uint8_t rx, uint8_t tx):_btSerial(rx,tx,0)
 #else
 #define _btSerial HC05_HW_SERIAL_PORT
-HC05::HC05(int pin)
+HC05::HC05(int cmdPin, int statPin)
 #endif
 {
-  pinMode(pin, OUTPUT);
-  _cmdPin = pin;
-  pinMode(2, INPUT);
+  pinMode(cmdPin, OUTPUT);
+  pinMode(statPin, INPUT);
+  _cmdPin = cmdPin;
+  _statPin = statPin;
 }
-
 
 static const unsigned long rates[] = {9600,19200,57600,115200,38400};
 
@@ -103,15 +103,16 @@ void HC05::setBaud(unsigned long baud)
   delay(1000);
 }
 
-void HC05::write(const char* buffer)
+/*
+ * The down side of this is that the status gets checked for every byte
+ * written out which doesn't seem that efficient, but maybe it is
+ * correct.
+ */
+size_t HC05::write(uint8_t byte)
 {
-  if (digitalRead(2) != HIGH)
+  if (digitalRead(_statPin) != HIGH)
   {
       DEBUG_PRINTLN("No Connection");
   }
-  else
-  {
-      DEBUG_WRITE(buffer);
-      _btSerial.write(buffer);
-  }
+  _btSerial.write(byte);
 }

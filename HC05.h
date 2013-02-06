@@ -50,21 +50,23 @@
 
 #endif  // DEBUG_HC05
 
-class HC05
+class HC05 : public Print
 {
   public:
-    HC05(int pin);
-    HC05(int pin, int rx, int tx);
+    HC05(int cmdPin, int statPin);
+    HC05(int cmdPin, int statPin, uint8_t rx, uint8_t tx);
     unsigned long findBaud();
     int cmd(const char* cmd);
     void setBaud(unsigned long baud);
-    void write(const char* buffer);
+    virtual size_t write(uint8_t byte);
+    using Print::write;
 #ifdef HC05_SOFTWARE_SERIAL
     SoftwareSerial _btSerial;
 #endif
 
   private:
     int _cmdPin;
+    int _statPin;
 };
 
 #endif
