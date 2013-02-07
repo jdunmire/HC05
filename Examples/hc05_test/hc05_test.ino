@@ -54,20 +54,23 @@ void loop()
   //myHC05.println("115200");
   
   // Send some data to test connection
+  /*
   for(int i = 0; i<100; i++)
   {
     myHC05.print("pass #");
     myHC05.println(i);
     //delay(1000);
   }
+  delay(1000);
+  */
   
   // Alternate between command mode and data.
   for (int i = 0; true; i++)
   {
     delay(100);  // Allow output to drain before attempting command mode
     myHC05.cmd("AT+UART?");
-    myHC05.print("got here: ");
-    myHC05.println(i);
+    //myHC05.print("got here: ");
+    //myHC05.println(i);
    // delay(1000);
   }
 
