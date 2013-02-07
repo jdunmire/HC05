@@ -59,7 +59,7 @@ unsigned long HC05::findBaud()
   return(0);
 }
 
-int HC05::cmd(const char* cmd)
+int HC05::cmd(const char* cmd, unsigned long timeout)
 {
   int recvd = 0;
   DEBUG_PRINTLN(cmd);
@@ -70,7 +70,7 @@ int HC05::cmd(const char* cmd)
   delay(100);
   _btSerial.write(cmd);
   _btSerial.write("\r\n");
-  _btSerial.setTimeout(100);
+  _btSerial.setTimeout(timeout);
   do {
       // ATTENTION: At least through Arduino v1.0.3, it is not possible
       //            to tell the difference between a timeout and
@@ -139,6 +139,30 @@ void HC05::setBaud(unsigned long baud)
   delay(1000);
 }
 
+int HC05::available()
+{
+    _btSerial.available();
+}
+
+int HC05::peek()
+{
+    _btSerial.peek();
+}
+
+void HC05::flush()
+{
+    _btSerial.flush();
+}
+
+int HC05::read()
+{
+    _btSerial.read();
+}
+
+bool HC05::connected()
+{
+    return(digitalRead(_statePin)?true:false);
+}
 
 size_t HC05::write(uint8_t byte)
 {
