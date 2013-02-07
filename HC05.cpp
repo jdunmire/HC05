@@ -70,8 +70,18 @@ int HC05::cmd(const char* cmd)
   delay(100);
   _btSerial.write(cmd);
   _btSerial.write("\r\n");
-  _btSerial.setTimeout(1000);
+  _btSerial.setTimeout(100);
   do {
+      // ATTENTION: At least through Arduino v1.0.3, it is not possible
+      //            to tell the difference between a timeout and
+      //            receiving only the termination character (NL in this
+      //            case), because the termination character is not
+      //            returned and timeout is not returned as a unique
+      //            indication.
+      //            In this case the result would be an early return
+      //            of a multiline response before the OK is received.
+      //            The return would incorrectly indicate an error (no
+      //            OK response).
       recvd = _btSerial.readBytesUntil('\n',_buffer,_bufsize);
       if (recvd > 0)
       {

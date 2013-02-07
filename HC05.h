@@ -67,7 +67,7 @@ class HC05 : public Print
     int _cmdPin;
     int _statePin;
     int _bufsize;
-    char _buffer[128];
+    char _buffer[32];
 };
 
 #endif
