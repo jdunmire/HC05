@@ -13,31 +13,31 @@ Components
 ----------
 
 `HC05`
-  A class for controlling and communicating through an ITead Studio
-  HC-05 Serial Port Module. This class inherits from the Stream class.
+    A class for controlling and communicating through an ITead Studio
+    HC-05 Serial Port Module. This class inherits from the Stream class.
 
 
 ###Methods:
 The Stream class is extended with the following methods.
 
 `findBaud()`
-  Determine HC-05 communications speed. Make this call in setup().
+    Determine HC-05 communications speed. Make this call in setup().
 
 `setBaud()`
-  Specify the HC-05 communications speed. The speed is non-volatile so
-  call this only when you the rate returned by findBaud() is not the one
-  you require.
+    Specify the HC-05 communications speed. The speed is non-volatile so
+    call this only when the rate returned by findBaud() is not the one
+    you require.
 
 `cmd()`
-  Send a command to the module. The 'key' (cmdPin) pin is activated to
-  put the module in command mode where 'AT' commands are recognized.
+    Send a command to the module. The 'key' (cmdPin) pin is activated to
+    put the module in command mode where 'AT' commands are recognized.
 
 `connected()`
-  Returns true when a BT connection has been established.
+    Returns true when a BT connection has been established.
 
 `write()`
-  The write(), and print*(), methods block until there is a BT
-  connection.
+    The write(), and print*(), methods block until there is a BT
+    connection.
 
 
 Installation
@@ -61,7 +61,7 @@ Installation
 * Follow this [GitHub repository](https://github.com/jdunmire/HC05)
   and use `git` to track your own changes by cloning:
 
-    $ cd ~/sketchbook/libraries
+    $ cd ~/sketchbook/libraries  
     $ git clone https://github.com/jdunmire/HC05.git
 
 * Start the Arduino IDE and you should find `HC05` in the
