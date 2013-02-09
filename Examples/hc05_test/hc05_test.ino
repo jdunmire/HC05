@@ -3,9 +3,9 @@
 #include <SoftwareSerial.h>
 
 #ifdef HC05_SOFTWARE_SERIAL
-HC05 myHC05 = HC05(3, 2, 4, 5);
+HC05 myHC05 = HC05(3, 2, 4, 5);  // cmd, state, rx, tx
 #else
-HC05 myHC05 = HC05(3, 2);
+HC05 myHC05 = HC05(3, 2);  // cmd, state
 #endif
 
 #ifdef DEBUG_HC05
@@ -16,81 +16,23 @@ HC05 myHC05 = HC05(3, 2);
 
 void setup()
 {
-  DEBUG_BEGIN(9600);
+  DEBUG_BEGIN(57600);
   DEBUG_PRINTLN("Setup");
-  delay(3000);
+  delay(3000);  // this delay is for debugging convenience only
   DEBUG_PRINTLN("DelayComplete");
-  myHC05.findBaud();
-  myHC05.cmd("AT");
-  /*
-  Serial.write("Setting baud");
-  myHC05.cmd("AT+UART=9600,0,0");
-  delay(100);
-  Serial.write("now reset 1 ");
-  myHC05.cmd("AT+RESET");
-  //digitalWrite(5, LOW);
-  delay(1000);
-  //digitalWrite(5, HIGH);
-  Serial.write("AT #2 ");
-  Serial.println(myHC05.cmd("AT"));
-  Serial.write("New Baud 9600??");
-  Serial.println(myHC05.findBaud());
-  */
-
+  myHC05.println(myHC05.findBaud());
+  
 }
 
 void loop()
 {
-  myHC05.setBaud(19200);
-  myHC05.cmd("AT+STATE?");
-  delay(1000);
-  myHC05.cmd("AT+STATE?");
-  /*
-  delay(1000);
-  myHC05.cmd("AT+STATE?");
-  delay(1000);
-  myHC05.cmd("AT+STATE?");
-  delay(1000);
-  myHC05.cmd("AT+STATE?");
-  delay(1000);
-  myHC05.cmd("AT+STATE?");
-  delay(1000);
-  myHC05.cmd("AT+STATE?");
-  delay(1000);
-  myHC05.cmd("AT+STATE?");
-  delay(1000);
-  myHC05.cmd("AT+STATE?");
-  delay(1000);
-  myHC05.write("9600\r\n");
-  delay(1000);
-/*  myHC05.setBaud(19200);
-  myHC05.write("19200\r\n");
-  myHC05.setBaud(38400);
-  myHC05.write("38400\r\n");
-  myHC05.setBaud(57600);
-  myHC05.write("57600\r\n");
-  //myHC05.setBaud(115200);
-  //myHC05.write("115200\r\n");
-  */
-  delay(1000);
-  for(int i = 0; i<10; i++)
-  {
-    //myHC05.cmd("AT");
-    myHC05.write("got here\r\n");
-    myHC05.write(i);
-    delay(1000);
+  if (myHC05.connected()){
+    DEBUG_PRINTLN("Connected");
+    myHC05.cmd("AT+DISC", 1000);
   }
-  for (int i = 0; true; i++)
+  else
   {
-    myHC05.cmd("AT");
-    delay(1000);
-    myHC05.write("got here 2\r\n");
-    delay(1000);
+    DEBUG_PRINTLN("Disconnected");
   }
-//  myHC05.setBaud(19200);
-//  for(int i = 0; i<3; i++)
- // {
-  //  myHC05.cmd("AT");
-   // delay(1000);
- // }
+  delay(1000);
 }

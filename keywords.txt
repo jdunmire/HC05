@@ -1,0 +1,21 @@
+#
+# Syntax coloring for HC05 Library
+#
+
+# Datatypes (Classes)
+HC05	KEYWORD1
+
+# Methods and functions
+cmd	KEYWORD2
+findBaud	KEYWORD2
+setBaud	KEYWORD2
+connected	KEYWORD2
+available	KEYWORD2
+peek	KEYWORD2
+read	KEYWORD2
+flush	KEYWORD2
+write	KEYWORD2
+
+# Constants (Macros in this case)
+DEBUG_HC05	LITERAL1
+HC05_SOFTWARE_SERIAL	LITERAL1

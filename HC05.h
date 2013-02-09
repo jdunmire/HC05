@@ -3,13 +3,18 @@
  *
  * Select hardware or software serial port:
  *   Define HC05_SOFTWARE_SERIAL to select a SoftwareSerial port, then
- *   initialize the HC05 class with three arguments:
- *     HC05(cmdPin, rxPin, txPin)
- * or
- *   Specify an alternate hardware serial port by changing the
- *   HC05_HW_SERIAL_PORT define.
+ *   initialize the HC05 class with either two arguments, for a hardware port,
+ *   or five arguments for a softare serial port:
  *
- * Define DEBUG_HC05 to enable debugging messages.
+ *     HC05(cmdPin, statePin)
+ *     or
+ *     HC05(cmdPin, statePin, rxPin, txPin)
+ *     
+ * Specify an alternate hardware serial port by changing the
+ * HC05_HW_SERIAL_PORT define.
+ *
+ * Define DEBUG_HC05 to enable debugging messages and use the
+ * DEBUG_BEGIN() macro in the sketch setup() function.
  * By default, debugging messages go to the harware serial port, Serial.
  * Change that by defining DEBUG_SW_PORT.
  *
@@ -17,6 +22,8 @@
 #ifndef HC05_h
 #define HC05_h
 
+#include <inttypes.h>
+#include <Stream.h>
 #include <SoftwareSerial.h>
 
 // This macro must be defined
@@ -27,7 +34,6 @@
  */
 #define HC05_SOFTWARE_SERIAL
 #define DEBUG_HC05
-#define DEBUG_BAUD 19200
 //#define DEBUG_SW_PORT swserial(4,5)
 
 #ifdef DEBUG_HC05
@@ -50,15 +56,25 @@
 
 #endif  // DEBUG_HC05
 
-class HC05 : public Print
+class HC05 : public Stream
 {
   public:
-    HC05(int cmdPin, int statPin);
-    HC05(int cmdPin, int statPin, uint8_t rx, uint8_t tx);
+    HC05(int cmdPin, int statePin);
+    HC05(int cmdPin, int statePin, uint8_t rx, uint8_t tx);
     unsigned long findBaud();
-    int cmd(const char* cmd);
+   
+    // cmd(): 100ms default timeout covers simple commands, but commands
+    // that manage the connection are likely to take much longer.
+    int cmd(const char* cmd, unsigned long timeout=100);
+
     void setBaud(unsigned long baud);
-    virtual size_t write(uint8_t byte);
+    bool connected(void);
+
+    virtual int available(void);
+    virtual int peek(void);
+    virtual int read(void);
+    virtual void flush(void);
+    virtual size_t write(uint8_t);
     using Print::write;
 #ifdef HC05_SOFTWARE_SERIAL
     SoftwareSerial _btSerial;
@@ -66,7 +82,9 @@ class HC05 : public Print
 
   private:
     int _cmdPin;
-    int _statPin;
+    int _statePin;
+    int _bufsize;
+    char _buffer[32];
 };
 
 #endif
