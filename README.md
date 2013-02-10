@@ -8,6 +8,9 @@ See the `LICENSE` file for copyright and license information.
 The serial port can be configured as any supported Serial port or
 a SoftwareSerial port.
 
+Additional information is available as an [exercise](http://rockingdlabs.dunmire.org/exercises-experiments/hc05-bluetooth) at [RockingD
+Labs](http://rockingdlabs.dunmire.org).
+
 
 Components
 ----------
