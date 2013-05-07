@@ -32,8 +32,8 @@
 /*
  * Optional macros, define as needed
  */
-//#define HC05_SOFTWARE_SERIAL
-//#define DEBUG_HC05
+#define HC05_SOFTWARE_SERIAL
+#define DEBUG_HC05
 //#define DEBUG_SW_PORT swserial(4,5)
 
 #ifdef DEBUG_HC05
@@ -87,4 +87,5 @@ class HC05 : public Stream
     char _buffer[32];
 };
 
+extern HC05 btSerial;
 #endif

@@ -1,11 +1,19 @@
+/*
+ * hc05_test - Test the disconnect command
+ *
+ * When the main loop detects that a bluetooth device is connected it
+ * disconnects the device.
+ *
+ * Montor the progress using the debug port.
+ */
 #include <Arduino.h>
 #include "HC05.h"
-#include <SoftwareSerial.h>
 
 #ifdef HC05_SOFTWARE_SERIAL
-HC05 myHC05 = HC05(3, 2, 4, 5);  // cmd, state, rx, tx
+#include <SoftwareSerial.h>
+HC05 btSerial = HC05(A2, A5, A3, A4);  // cmd, state, rx, tx
 #else
-HC05 myHC05 = HC05(3, 2);  // cmd, state
+HC05 btSerial = HC05(3, 2);  // cmd, state
 #endif
 
 #ifdef DEBUG_HC05
@@ -20,15 +28,15 @@ void setup()
   DEBUG_PRINTLN("Setup");
   delay(3000);  // this delay is for debugging convenience only
   DEBUG_PRINTLN("DelayComplete");
-  myHC05.println(myHC05.findBaud());
+  btSerial.println(btSerial.findBaud());
   
 }
 
 void loop()
 {
-  if (myHC05.connected()){
+  if (btSerial.connected()){
     DEBUG_PRINTLN("Connected");
-    myHC05.cmd("AT+DISC", 1000);
+    btSerial.cmd("AT+DISC", 1000);
   }
   else
   {

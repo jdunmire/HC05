@@ -1,27 +1,36 @@
+/*
+ * echo - echo characters back to bluetooth device
+ *
+ * Waits for a connection and then echos each charater received.
+ *
+ * Debugging is enabled, so if you open the 'Serial Monitor' you can see
+ * the search for the HC05 baud and the wait for the BT connection.
+ */
 #include <Arduino.h>
 #include "HC05.h"
-#include <SoftwareSerial.h>
 
 #ifdef HC05_SOFTWARE_SERIAL
-HC05 myHC05 = HC05(3, 2, 4, 5);  // cmd, state, rx, tx
+#include <SoftwareSerial.h>
+HC05 btSerial = HC05(A2, A5, A3, A4);  // cmd, state, rx, tx
 #else
-HC05 myHC05 = HC05(3, 2);  // cmd, state
+HC05 btSerial = HC05(3, 2);  // cmd, state
 #endif
 
 void setup()
 {
-  myHC05.findBaud();
+  DEBUG_BEGIN(57600);
+  btSerial.findBaud();
 }
 
 void loop()
 {
-  myHC05.println("Echo Server- type something");
+  btSerial.println("Echo Server- type something");
 
-  while (myHC05.connected())
+  while (btSerial.connected())
   {
-    if (myHC05.available())
+    if (btSerial.available())
     {
-      myHC05.write(myHC05.read());
+      btSerial.write(btSerial.read());
     }
   }
 }

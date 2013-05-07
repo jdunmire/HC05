@@ -14,9 +14,9 @@
  */
 #ifdef HC05_SOFTWARE_SERIAL
 #include <SoftwareSerial.h>
-HC05 myHC05 = HC05(3, 2, 4, 5);  // cmd, state, rx, tx
+HC05 btSerial = HC05(A2, A5, A3, A4);  // cmd, state, rx, tx
 #else
-HC05 myHC05 = HC05(3, 2);  // cmd, state
+HC05 btSerial = HC05(3, 2);  // cmd, state
 #endif
 
 /*
@@ -27,7 +27,7 @@ String NewNameCmd("AT+NAME=");
 
 void setup()
 {
-  myHC05.findBaud();
+  btSerial.findBaud();
 }
 
 
@@ -37,26 +37,26 @@ void loop(){
   bool waiting = true;
   String newName;
 
-  myHC05.println("");
-  myHC05.print("New name? ");
+  btSerial.println("");
+  btSerial.print("New name? ");
 
   // Use a timeout that will give reasonablly quick response to the user.
-  myHC05.setTimeout(100);
+  btSerial.setTimeout(100);
   while (waiting)
   {
-    if (myHC05.available())
+    if (btSerial.available())
     {
-      recvd = myHC05.readBytes(buffer, 32);
+      recvd = btSerial.readBytes(buffer, 32);
       for (size_t i = 0; i < recvd; i++)
       {
         if (buffer[i] != '\n')
         {
           newName += buffer[i];
-          myHC05.print(buffer[i]);
+          btSerial.print(buffer[i]);
         }
         else
         {
-          myHC05.println(" ");
+          btSerial.println(" ");
           waiting = false;
           break;
         }
@@ -70,21 +70,21 @@ void loop(){
   newName.toCharArray(buffer, 32);
 
   // make sure there is no pending output to interfere with commands
-  myHC05.flush();
+  btSerial.flush();
 
   // The name change command takes extra time.
   // 1000ms is large enough, but arbitrary.
-  if (myHC05.cmd(buffer,1000))
+  if (btSerial.cmd(buffer,1000))
   {
-    myHC05.println("Name changed.");
-    myHC05.println("Reconnect or rescan to see the result.");
-    myHC05.println("Disconnecting...");
-    myHC05.flush();
-    myHC05.cmd("AT+DISC", 1000);
+    btSerial.println("Name changed.");
+    btSerial.println("Reconnect or rescan to see the result.");
+    btSerial.println("Disconnecting...");
+    btSerial.flush();
+    btSerial.cmd("AT+DISC", 1000);
   }
   else
   {
-    myHC05.println("Name NOT changed.");
+    btSerial.println("Name NOT changed.");
   }
   
   // Send a count to the port just to indicate activity.
@@ -94,10 +94,10 @@ void loop(){
   {
     if (i == 0)
     {
-      myHC05.println("");
+      btSerial.println("");
     }
-    myHC05.print(i);
-    myHC05.print('\r');
+    btSerial.print(i);
+    btSerial.print('\r');
     delay(1000);
   }
 }
