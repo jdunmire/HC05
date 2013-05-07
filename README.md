@@ -8,13 +8,16 @@ See the `LICENSE` file for copyright and license information.
 The serial port can be configured as any supported Serial port or
 a SoftwareSerial port.
 
-Additional information is available as an [exercise](http://rockingdlabs.dunmire.org/exercises-experiments/hc05-bluetooth) at [RockingD
-Labs](http://rockingdlabs.dunmire.org).
+Includes a demonstration program that can be uses to change the name
+reported by an HC05 module.
+
+Additional information is available as an
+[exercise](http://rockingdlabs.dunmire.org/exercises-experiments/hc05-bluetooth)
+at [RockingD Labs](http://rockingdlabs.dunmire.org).
 
 
 Components
 ----------
-
 `HC05`
     A class for controlling and communicating through an ITead Studio
     HC-05 Serial Port Module. This class inherits from the Stream class.
@@ -41,6 +44,23 @@ The Stream class is extended with the following methods.
 `write()`
     The write(), and print*(), methods block until there is a BT
     connection.
+
+Example Programs
+----------------
+`changeName`
+    This application is one of the reasons I wrote this library. I
+    wanted to be able to change the name reported by the HC05 because I
+    have multiple HC05 modules that I kept mixing up. With this program
+    you can set the name of the HC05 module to reflect something
+    physically identifying (or anything else that helps you tell your
+    modules apart).
+
+`echo`
+    Echo characters as they are received.
+
+`hc05_test`
+    Tests the disconnect command (AT+DISC). This was something I used
+    during development and probably is not of general interest.
 
 
 Installation
@@ -69,4 +89,13 @@ Installation
 
 * Start the Arduino IDE and you should find `HC05` in the
   libraries section.
+
+By default the library is configured for a software serial port and
+debugging output to the hardware serial port (Serial) is turned on. You
+will need to edit the HC05.h file if you want to change those settings.
+
+The Bluetooth port is `btSerial` and must be setup as shown at the top
+of the Example sketches. If debugging output is enabled in HC05.h (it is
+by default) then your sketch must include a DEBUG_BEGIN(baud) command to
+initialize the debug output port and set it's baud rate.
 
