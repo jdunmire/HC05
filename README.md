@@ -39,7 +39,7 @@ The Stream class is extended with the following methods.
     put the module in command mode where 'AT' commands are recognized.
 
 `connected()`
-    Returns true when a BT connection has been established.
+    Returns true when a BT connection has been established. (Declared only if HC05_STATE_PIN defined)
 
 `write()`
     The write(), and print*(), methods block until there is a BT
