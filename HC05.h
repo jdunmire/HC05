@@ -9,7 +9,7 @@
  *     HC05(cmdPin, statePin)
  *     or
  *     HC05(cmdPin, statePin, rxPin, txPin)
- *     
+ *
  * Specify an alternate hardware serial port by changing the
  * HC05_HW_SERIAL_PORT define.
  *
@@ -26,6 +26,9 @@
 #include <Stream.h>
 #include <SoftwareSerial.h>
 
+//Comment if you have no State pin
+#define HC05_STATE_PIN
+
 // This macro must be defined
 #define HC05_HW_SERIAL_PORT Serial
 
@@ -37,39 +40,40 @@
 //#define DEBUG_SW_PORT swserial(4,5)
 
 #ifdef DEBUG_HC05
-  #ifdef DEBUG_SW_PORT
-  #define DEBUG_PORT swserial
-  #else
-  #define DEBUG_PORT Serial
-  #endif
+#ifdef DEBUG_SW_PORT
+#define DEBUG_PORT swserial
+#else
+#define DEBUG_PORT Serial
+#endif
 
-  #define DEBUG_BEGIN(baud) DEBUG_PORT.begin(baud)
-  #define DEBUG_WRITE(...) DEBUG_PORT.write(__VA_ARGS__)
-  #define DEBUG_PRINT(...) DEBUG_PORT.print(__VA_ARGS__)
-  #define DEBUG_PRINTLN(...) DEBUG_PORT.println(__VA_ARGS__)
+#define DEBUG_BEGIN(baud) DEBUG_PORT.begin(baud)
+#define DEBUG_WRITE(...) DEBUG_PORT.write(__VA_ARGS__)
+#define DEBUG_PRINT(...) DEBUG_PORT.print(__VA_ARGS__)
+#define DEBUG_PRINTLN(...) DEBUG_PORT.println(__VA_ARGS__)
 
 #else
-  #define DEBUG_BEGIN(baud)
-  #define DEBUG_WRITE(...)
-  #define DEBUG_PRINT(...)
-  #define DEBUG_PRINTLN(...)
+#define DEBUG_BEGIN(baud)
+#define DEBUG_WRITE(...)
+#define DEBUG_PRINT(...)
+#define DEBUG_PRINTLN(...)
 
 #endif  // DEBUG_HC05
 
 class HC05 : public Stream
 {
-  public:
+public:
     HC05(int cmdPin, int statePin);
     HC05(int cmdPin, int statePin, uint8_t rx, uint8_t tx);
     unsigned long findBaud();
-   
+
     // cmd(): 100ms default timeout covers simple commands, but commands
     // that manage the connection are likely to take much longer.
     int cmd(const char* cmd, unsigned long timeout=100);
 
     void setBaud(unsigned long baud);
+#ifdef HC05_STATE_PIN
     bool connected(void);
-
+#endif
     virtual int available(void);
     virtual int peek(void);
     virtual int read(void);
@@ -80,9 +84,11 @@ class HC05 : public Stream
     SoftwareSerial _btSerial;
 #endif
 
-  private:
+private:
     int _cmdPin;
+#ifdef HC05_STATE_PIN
     int _statePin;
+    #endif
     int _bufsize;
     char _buffer[32];
 };
