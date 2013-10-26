@@ -15,7 +15,9 @@ HC05::HC05(int cmdPin, int statePin)
   pinMode(cmdPin, OUTPUT);
   pinMode(statePin, INPUT);
   _cmdPin = cmdPin;
+  #ifdef HC05_STATE_PIN
   _statePin = statePin;
+  #endif
   _bufsize = sizeof(_buffer)/sizeof(char);
 }
 

@@ -86,7 +86,9 @@ public:
 
 private:
     int _cmdPin;
+#ifdef HC05_STATE_PIN
     int _statePin;
+    #endif
     int _bufsize;
     char _buffer[32];
 };
