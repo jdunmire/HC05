@@ -158,12 +158,12 @@ int HC05::read()
 {
     _btSerial.read();
 }
-
+#ifdef HC05_STATE_PIN
 bool HC05::connected()
 {
     return(digitalRead(_statePin)?true:false);
 }
-
+#endif
 size_t HC05::write(uint8_t byte)
 {
   // The down side of this check is that the status gets checked for
