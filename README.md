@@ -47,6 +47,10 @@ The Stream class is extended with the following methods.
 
 Example Programs
 ----------------
+The default library configuration uses a software serial port. The
+example programs will work with either a hardware or a software serial
+port. The configuration is changed by modifying the `HC05.h` file.
+
 `changeName`
     This application is one of the reasons I wrote this library. I
     wanted to be able to change the name reported by the HC05 because I
@@ -90,12 +94,26 @@ Installation
 * Start the Arduino IDE and you should find `HC05` in the
   libraries section.
 
+### Configuration
 By default the library is configured for a software serial port and
 debugging output to the hardware serial port (Serial) is turned on. You
 will need to edit the HC05.h file if you want to change those settings.
+
+See the `SoftwareSerial.fzz` file for the proper default connections.
+The `HardwareSerial.fzz` shows the hardware port alternative. The files
+can be read by the free program from 
+[Fritzing](http://fritzing.org/home/)
 
 The Bluetooth port is `btSerial` and must be setup as shown at the top
 of the Example sketches. If debugging output is enabled in HC05.h (it is
 by default) then your sketch must include a DEBUG_BEGIN(baud) command to
 initialize the debug output port and set it's baud rate.
+
+#### Hardware Serial Port Issues for UNO
+Using the hardware serial port on the UNO comes with some caveats:
+
+  * You will have to disconnect the HC05 module to upload a sketch.
+  * If you use the Arduino `Serial Monitor` you will see the traffic to and from the HC05
+    serial port. If you type in the `Serial Monitor` it will interfere with the HC05
+    traffic.
 
