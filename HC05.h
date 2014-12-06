@@ -4,7 +4,7 @@
  * Select hardware or software serial port:
  *   Define HC05_SOFTWARE_SERIAL to select a SoftwareSerial port, then
  *   initialize the HC05 class with either two arguments, for a hardware port,
- *   or five arguments for a softare serial port:
+ *   or four arguments for a software serial port:
  *
  *     HC05(cmdPin, statePin)
  *     or
@@ -26,11 +26,20 @@
 #include <Stream.h>
 #include <SoftwareSerial.h>
 
-//Comment if you have no State pin
+/*
+ * Comment the following define line if you aren't using the State pin or
+ * if your HC05 does not have such a pin.  You still must specify a
+ * statePin to initialize the HC05 class, but the pin will not be used.
+ */
 #define HC05_STATE_PIN
 
-// This macro must be defined
+/*
+ * This macro must be defined even if you are using a software serial
+ * port. You can change this to any serial port supported by your
+ * Arduino (i.e, Serial1, Serial2, etc.)
+ */
 #define HC05_HW_SERIAL_PORT Serial
+
 
 /*
  * Optional macros, define as needed
@@ -75,6 +84,7 @@ public:
     bool connected(void);
 #endif
     virtual int available(void);
+    virtual void begin(unsigned long);
     virtual int peek(void);
     virtual int read(void);
     virtual void flush(void);

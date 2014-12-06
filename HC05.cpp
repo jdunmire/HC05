@@ -13,9 +13,9 @@ HC05::HC05(int cmdPin, int statePin)
 #endif
 {
     pinMode(cmdPin, OUTPUT);
-    pinMode(statePin, INPUT);
     _cmdPin = cmdPin;
 #ifdef HC05_STATE_PIN
+    pinMode(statePin, INPUT);
     _statePin = statePin;
 #endif
     _bufsize = sizeof(_buffer)/sizeof(char);
@@ -39,6 +39,7 @@ unsigned long HC05::findBaud()
     {
         _btSerial.begin(rates[rn]);
         _btSerial.setTimeout(100);
+        _btSerial.flush();
         DEBUG_WRITE("Trying ");
         DEBUG_PRINT(rates[rn]);
         DEBUG_WRITE("... ");
@@ -161,17 +162,32 @@ int HC05::read()
 {
     _btSerial.read();
 }
+
+void HC05::begin(unsigned long baud)
+{
+    _btSerial.begin(baud);
+}
+
+#ifndef HC05_SOFTWARE_SERIAL
+// only hardware serial ports support parity/stop bit configuration
+void HC05::begin(unsigned long baud, uint8_t config)
+{
+    _btSerial.begin(baud, config);
+}
+#endif
+
 #ifdef HC05_STATE_PIN
 bool HC05::connected()
 {
     return(digitalRead(_statePin)?true:false);
 }
 #endif
+
 size_t HC05::write(uint8_t byte)
 {
 #ifdef HC05_STATE_PIN
     // The down side of this check is that the status gets checked for
-    // every byte written out which doesn't seem that efficient.
+    // every byte written out. That doesn't seem efficient.
     if (digitalRead(_statePin) != HIGH)
     {
         DEBUG_PRINT("No Connection, waiting...");
