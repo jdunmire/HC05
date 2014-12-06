@@ -51,6 +51,10 @@ The default library configuration uses a software serial port. The
 example programs will work with either a hardware or a software serial
 port. The configuration is changed by modifying the `HC05.h` file.
 
+See the `SoftwareSerial.fzz` file for the proper default connections.
+(`.fzz` files can be read by the free program available from
+[Fritzing](http://fritzing.org/home/))
+
 `changeName`
     This application is one of the reasons I wrote this library. I
     wanted to be able to change the name reported by the HC05 because I
@@ -66,10 +70,25 @@ port. The configuration is changed by modifying the `HC05.h` file.
     Tests the disconnect command (AT+DISC). This was something I used
     during development and probably is not of general interest.
 
+`recover`
+    This example shows one method that will _recover_ from incompatible
+    HC05 serial settings. It uses connections (see the `Recovery.fzz`
+    file) that are not compatible with other uses of this library.
+
 
 Installation
 ------------
-###Option 1: Source only
+###Option 1: Git (Recommended)
+* Follow this [GitHub repository](https://github.com/jdunmire/HC05)
+  and use `git` to track your own changes by cloning:
+
+    $ cd ~/sketchbook/libraries
+    $ git clone https://github.com/jdunmire/HC05.git
+
+* Start the Arduino IDE and you should find `HC05` in the
+  libraries section.
+
+###Option 2: Source only
 * Download a ZIP file. The ZIP button at
   [GitHub](https://github.com/jdunmire/HC05) will always get the
   latest version, but you may prefer one of the
@@ -84,16 +103,6 @@ Installation
 * Start the Arduino IDE and you should find `HC05` in the libraries
   section.
 
-###Option 2: Git (Recommended)
-* Follow this [GitHub repository](https://github.com/jdunmire/HC05)
-  and use `git` to track your own changes by cloning:
-
-    $ cd ~/sketchbook/libraries  
-    $ git clone https://github.com/jdunmire/HC05.git
-
-* Start the Arduino IDE and you should find `HC05` in the
-  libraries section.
-
 ### Configuration
 By default the library is configured for a software serial port and
 debugging output to the hardware serial port (Serial) is turned on. You
@@ -101,8 +110,8 @@ will need to edit the HC05.h file if you want to change those settings.
 
 See the `SoftwareSerial.fzz` file for the proper default connections.
 The `HardwareSerial.fzz` shows the hardware port alternative. The files
-can be read by the free program from 
-[Fritzing](http://fritzing.org/home/)
+can be read by the free program
+available from [Fritzing](http://fritzing.org/home/)
 
 The Bluetooth port is `btSerial` and must be setup as shown at the top
 of the Example sketches. If debugging output is enabled in HC05.h (it is
@@ -113,7 +122,7 @@ initialize the debug output port and set it's baud rate.
 Using the hardware serial port on the UNO comes with some caveats:
 
   * You will have to disconnect the HC05 module to upload a sketch.
-  * If you use the Arduino `Serial Monitor` you will see the traffic to and from the HC05
-    serial port. If you type in the `Serial Monitor` it will interfere with the HC05
-    traffic.
+  * If you use the Arduino `Serial Monitor` you will see the traffic to
+    and from the HC05 serial port. If you type in the `Serial Monitor`
+    it will interfere with the HC05 traffic.
 
