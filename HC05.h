@@ -4,7 +4,7 @@
  * Select hardware or software serial port:
  *   Define HC05_SOFTWARE_SERIAL to select a SoftwareSerial port, then
  *   initialize the HC05 class with either two arguments, for a hardware port,
- *   or five arguments for a softare serial port:
+ *   or four arguments for a software serial port:
  *
  *     HC05(cmdPin, statePin)
  *     or
@@ -26,11 +26,20 @@
 #include <Stream.h>
 #include <SoftwareSerial.h>
 
-//Comment if you have no State pin
+/*
+ * Comment the following define line if you aren't using the State pin or
+ * if your HC05 does not have such a pin.  You still must specify a
+ * statePin to initialize the HC05 class, but the pin will not be used.
+ */
 #define HC05_STATE_PIN
 
-// This macro must be defined
+/*
+ * This macro must be defined even if you are using a software serial
+ * port. You can change this to any serial port supported by your
+ * Arduino (i.e, Serial1, Serial2, etc.)
+ */
 #define HC05_HW_SERIAL_PORT Serial
+
 
 /*
  * Optional macros, define as needed
@@ -65,16 +74,24 @@ public:
     HC05(int cmdPin, int statePin);
     HC05(int cmdPin, int statePin, uint8_t rx, uint8_t tx);
     unsigned long findBaud();
+    void setBaud(unsigned long baud);
 
     // cmd(): 100ms default timeout covers simple commands, but commands
     // that manage the connection are likely to take much longer.
     int cmd(const char* cmd, unsigned long timeout=100);
 
-    void setBaud(unsigned long baud);
+    // HC05 cmdMode2 forces 38400, no parity, one stop bit
+    // Entering cmdMode2 uses a pin to turn the HC05 power on and off
+    // with the cmdPin high. cmdPin must remain high to stay in
+    // cmdMode2, so use cmdMode2End() to exit.
+    void cmdMode2Start(int pwrPin);
+    void cmdMode2End(void);
+
 #ifdef HC05_STATE_PIN
     bool connected(void);
 #endif
     virtual int available(void);
+    virtual void begin(unsigned long);
     virtual int peek(void);
     virtual int read(void);
     virtual void flush(void);
@@ -85,12 +102,14 @@ public:
 #endif
 
 private:
+    bool cmdMode;
     int _cmdPin;
 #ifdef HC05_STATE_PIN
     int _statePin;
 #endif
     int _bufsize;
     char _buffer[32];
+    void setCmdPin(bool state);
 };
 
 extern HC05 btSerial;
