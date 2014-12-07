@@ -36,6 +36,13 @@ The Stream class is extended with the following methods.
     call this only when the rate returned by findBaud() is not the one
     you require.
 
+`setBaud(unsigned long rate, unsigned long parity, unsigned long stopbits)`
+    Use this method when you need something besides the default no
+    parity, one stop bit settings that are the default.
+    __CAUTION!__ The HC-05 supports many serial configurations that are not
+    compatible with an Arduino. For example, the Arduino software serial
+    port port supports only no parity, one stop bit settings.
+
 `cmd()`
     Send a command to the module. The 'key' (cmdPin) pin is activated to
     put the module in command mode where 'AT' commands are recognized.
@@ -87,6 +94,11 @@ See the `SoftwareSerial.fzz` file for the proper default connections.
     its serial port settings are incompatible with the Arduino serial
     ports. Power to HC-05 must be controlled by an Arduino pin.
     See the `Recovery.fzz` diagram for suitable connections.
+
+`findBaudTest`
+    Tests both setBaud() and findBaud() by trying every combination of
+    supported rates. The output from this example looks best if
+    DEBUG_HC05 is not defined. (Simply comment out that line in HC05.h).
 
 
 Installation

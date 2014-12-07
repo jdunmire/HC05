@@ -74,7 +74,8 @@ public:
     HC05(int cmdPin, int statePin);
     HC05(int cmdPin, int statePin, uint8_t rx, uint8_t tx);
     unsigned long findBaud();
-    void setBaud(unsigned long baud);
+    void setBaud(unsigned long baud);  // always no parity, one stop bit
+    void setBaud(unsigned long baud, unsigned long stopbits, unsigned long parity);
 
     // cmd(): 100ms default timeout covers simple commands, but commands
     // that manage the connection are likely to take much longer.
