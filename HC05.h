@@ -74,12 +74,19 @@ public:
     HC05(int cmdPin, int statePin);
     HC05(int cmdPin, int statePin, uint8_t rx, uint8_t tx);
     unsigned long findBaud();
+    void setBaud(unsigned long baud);
 
     // cmd(): 100ms default timeout covers simple commands, but commands
     // that manage the connection are likely to take much longer.
     int cmd(const char* cmd, unsigned long timeout=100);
 
-    void setBaud(unsigned long baud);
+    // HC05 cmdMode2 forces 38400, no parity, one stop bit
+    // Entering cmdMode2 uses a pin to turn the HC05 power on and off
+    // with the cmdPin high. cmdPin must remain high to stay in
+    // cmdMode2, so use cmdMode2End() to exit.
+    void cmdMode2Start(int pwrPin);
+    void cmdMode2End(void);
+
 #ifdef HC05_STATE_PIN
     bool connected(void);
 #endif
@@ -95,12 +102,14 @@ public:
 #endif
 
 private:
+    bool cmdMode;
     int _cmdPin;
 #ifdef HC05_STATE_PIN
     int _statePin;
 #endif
     int _bufsize;
     char _buffer[32];
+    void setCmdPin(bool state);
 };
 
 extern HC05 btSerial;

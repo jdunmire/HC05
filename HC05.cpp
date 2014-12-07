@@ -14,6 +14,7 @@ HC05::HC05(int cmdPin, int statePin)
 {
     pinMode(cmdPin, OUTPUT);
     _cmdPin = cmdPin;
+    cmdMode = false;
 #ifdef HC05_STATE_PIN
     pinMode(statePin, INPUT);
     _statePin = statePin;
@@ -33,7 +34,7 @@ unsigned long HC05::findBaud()
     //char _buffer[128];
 
     DEBUG_PRINTLN("findBaud");
-    digitalWrite(_cmdPin, HIGH);
+    setCmdPin(HIGH);
     delay(100);
     for(int rn = 0; rn < numRates; rn++)
     {
@@ -49,7 +50,7 @@ unsigned long HC05::findBaud()
         {
             DEBUG_PRINTLN("Found.");
             // FIXME: refactor to a single return
-            digitalWrite(_cmdPin, LOW);
+            setCmdPin(LOW);
             return(rates[rn]);
         }
         else
@@ -57,7 +58,7 @@ unsigned long HC05::findBaud()
             DEBUG_PRINTLN("x");
         }
     }
-    digitalWrite(_cmdPin, LOW);
+    setCmdPin(LOW);
     DEBUG_WRITE("\r\nNo connection\r\n");
     return(0);
 }
@@ -67,7 +68,7 @@ int HC05::cmd(const char* cmd, unsigned long timeout)
     int recvd = 0;
     DEBUG_PRINTLN(cmd);
 
-    digitalWrite(_cmdPin, HIGH);
+    setCmdPin(HIGH);
     // No spec for how long it takes to enter command mode, but 100ms
     // seems to work- assuming the output has been drained.
     delay(100);
@@ -99,9 +100,9 @@ int HC05::cmd(const char* cmd, unsigned long timeout)
     }
     while ((recvd > 0) && (_buffer[0] != 'O' || _buffer[1] != 'K'));
 
-    digitalWrite(_cmdPin, LOW);
+    setCmdPin(LOW);
 
-    // Emperically determined that it takes some time to reliablly exit
+    // Empirically determined that it takes some time to reliably exit
     // command mode. The appeared to be a baud rate dependency and with
     // >100ms required at 9600 baud.
     delay(150);
@@ -119,7 +120,7 @@ int HC05::cmd(const char* cmd, unsigned long timeout)
 void HC05::setBaud(unsigned long baud)
 {
     int recvd = 0;
-    digitalWrite(_cmdPin, HIGH);
+    setCmdPin(HIGH);
     delay(200);
     DEBUG_WRITE("AT+UART=");
     _btSerial.write("AT+UART=");
@@ -136,7 +137,7 @@ void HC05::setBaud(unsigned long baud)
     {
         DEBUG_PRINTLN("timeout");
     }
-    digitalWrite(_cmdPin, LOW);
+    setCmdPin(LOW);
     delay(100);
     cmd("AT+RESET");
     _btSerial.begin(baud);
@@ -199,4 +200,33 @@ size_t HC05::write(uint8_t byte)
     }
 #endif
     _btSerial.write(byte);
+}
+
+
+void HC05::cmdMode2Start(int pwrPin)
+{
+    pinMode(pwrPin, OUTPUT);
+    digitalWrite(pwrPin, LOW);
+    delay(200);  // off or reset time
+    digitalWrite(_cmdPin, HIGH);
+    digitalWrite(pwrPin, HIGH);
+    cmdMode = true;
+    _btSerial.begin(38400);
+    delay(1000);  // time for the HC05 to initialize
+}
+
+
+void HC05::cmdMode2End(void)
+{
+    digitalWrite(_cmdPin, LOW);
+    cmdMode = false;
+    delay(1000);
+}
+
+void HC05::setCmdPin(bool state)
+{
+    if (cmdMode == false)
+    {
+        digitalWrite(_cmdPin, state);
+    }
 }
