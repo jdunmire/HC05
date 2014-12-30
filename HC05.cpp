@@ -229,12 +229,12 @@ void HC05::cmdMode2Start(int pwrPin)
 {
     pinMode(pwrPin, OUTPUT);
     digitalWrite(pwrPin, LOW);
-    delay(200);  // off or reset time
+    delay(250);  // off or reset time
     digitalWrite(_cmdPin, HIGH);
     digitalWrite(pwrPin, HIGH);
     cmdMode = true;
     _btSerial.begin(38400);
-    delay(1000);  // time for the HC05 to initialize
+    delay(1500);  // time for the HC05 to initialize
 }
 
 
