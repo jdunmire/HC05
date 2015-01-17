@@ -22,6 +22,7 @@ void setup()
 {
   DEBUG_BEGIN(57600);
   Serial.begin(57600);
+  Serial.println("---------- Setup ----------");
   btSerial.findBaud();
   btSerial.setBaud(4800);
   Serial.println("---------- Starting test ----------");
