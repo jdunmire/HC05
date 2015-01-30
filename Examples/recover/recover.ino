@@ -29,6 +29,7 @@ int powerPin = 7;
 void setup()
 {
   DEBUG_BEGIN(57600);
+  DEBUG_PRINTLN("Starting recovery in 3 seconds.");
   btSerial.cmdMode2Start(powerPin);
 
   // Provide some time for the user to start the serial monitor

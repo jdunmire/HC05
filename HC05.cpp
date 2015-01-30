@@ -22,7 +22,8 @@ HC05::HC05(int cmdPin, int statePin)
     _bufsize = sizeof(_buffer)/sizeof(char);
 }
 
-static const unsigned long rates[] = {9600,19200,57600,115200,38400};
+static const unsigned long rates[] =
+    {4800,9600,19200,38400,57600,115200};
 
 unsigned long HC05::findBaud()
 {
@@ -95,7 +96,7 @@ int HC05::cmd(const char* cmd, unsigned long timeout)
         }
         else
         {
-            DEBUG_PRINTLN("timeout");
+            DEBUG_PRINTLN("timeout 1");
         }
     }
     while ((recvd > 0) && (_buffer[0] != 'O' || _buffer[1] != 'K'));
@@ -112,12 +113,12 @@ int HC05::cmd(const char* cmd, unsigned long timeout)
 
 /*
  * If setBaud() is called while the HC-05 is connected, then
- * it will be disconnected when the AT+RESET command is issued, and
+ * it will be disconnected when AT+RESET command is issued, and
  * it may take 2 (or more?) connection attempts to reconnect. The extra
  * connect attempts may be a host side issue and not specific to the
  * HC-05 module.
  */
-void HC05::setBaud(unsigned long baud)
+void HC05::setBaud(unsigned long baud, unsigned long stopbits, unsigned long parity)
 {
     int recvd = 0;
     setCmdPin(HIGH);
@@ -126,8 +127,22 @@ void HC05::setBaud(unsigned long baud)
     _btSerial.write("AT+UART=");
     DEBUG_PRINT(baud);
     _btSerial.print(baud);
-    DEBUG_WRITE(",0,0\r\n");
-    _btSerial.write(",0,0\r\n");
+
+    DEBUG_PRINT(",");
+    _btSerial.print(",");
+
+    DEBUG_PRINT(stopbits);
+    _btSerial.print(stopbits);
+
+    DEBUG_PRINT(",");
+    _btSerial.print(",");
+
+    DEBUG_PRINT(parity);
+    _btSerial.print(parity);
+
+    DEBUG_WRITE("\r\n");
+    _btSerial.write("\r\n");
+
     recvd = _btSerial.readBytes(_buffer,_bufsize);
     if (recvd > 0)
     {
@@ -135,14 +150,21 @@ void HC05::setBaud(unsigned long baud)
     }
     else
     {
-        DEBUG_PRINTLN("timeout");
+        DEBUG_PRINTLN("timeout 2");
     }
-    setCmdPin(LOW);
-    delay(100);
     cmd("AT+RESET");
+    setCmdPin(LOW);
     _btSerial.begin(baud);
     delay(1000);
 }
+
+// Usually parity is none, and there is only one stop bit, so this
+// simpler call will do the job.
+void HC05::setBaud(unsigned long baud)
+{
+    setBaud(baud, 0, 0);
+}
+
 
 int HC05::available()
 {
@@ -207,12 +229,12 @@ void HC05::cmdMode2Start(int pwrPin)
 {
     pinMode(pwrPin, OUTPUT);
     digitalWrite(pwrPin, LOW);
-    delay(200);  // off or reset time
+    delay(250);  // off or reset time
     digitalWrite(_cmdPin, HIGH);
     digitalWrite(pwrPin, HIGH);
     cmdMode = true;
     _btSerial.begin(38400);
-    delay(1000);  // time for the HC05 to initialize
+    delay(1500);  // time for the HC05 to initialize
 }
 
 
