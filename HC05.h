@@ -93,6 +93,9 @@ public:
 #endif
     virtual int available(void);
     virtual void begin(unsigned long);
+#ifndef HC05_SOFTWARE_SERIAL
+	virtual void begin(unsigned long, uint8_t);
+#endif
     virtual int peek(void);
     virtual int read(void);
     virtual void flush(void);
