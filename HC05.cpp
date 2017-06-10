@@ -168,12 +168,12 @@ void HC05::setBaud(unsigned long baud)
 
 int HC05::available()
 {
-    _btSerial.available();
+    return _btSerial.available();
 }
 
 int HC05::peek()
 {
-    _btSerial.peek();
+    return _btSerial.peek();
 }
 
 void HC05::flush()
@@ -183,7 +183,7 @@ void HC05::flush()
 
 int HC05::read()
 {
-    _btSerial.read();
+    return _btSerial.read();
 }
 
 void HC05::begin(unsigned long baud)
@@ -221,7 +221,7 @@ size_t HC05::write(uint8_t byte)
         DEBUG_PRINTLN("OK");
     }
 #endif
-    _btSerial.write(byte);
+    return _btSerial.write(byte);
 }
 
 
