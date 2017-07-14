@@ -23,46 +23,47 @@ Components
     HC-05 Serial Port Module. This class inherits from the Stream class.
 
 
-###Methods:
+### Methods:
 The Stream class is extended with the following methods.
 
-`findBaud()`
-    Determine HC-05 communications speed. Make this call in setup()
-    instead of `begin()`. `begin()` is still avaialble and can be used
-    inplace of `findBaud()` if you know the HC-05 communications speed.
+##### `findBaud()`
 
-`setBaud(unsigned long rate)`
-    Specify the HC-05 communications speed. The speed is non-volatile so
-    call this only when the rate returned by findBaud() is not the one
-    you require.
+Determine HC-05 communications speed. Make this call in setup()
+instead of `begin()`. `begin()` is still avaialble and can be used
+inplace of `findBaud()` if you know the HC-05 communications speed.
 
-`setBaud(unsigned long rate, unsigned long parity, unsigned long stopbits)`
-    Use this method when you need something besides the default no
-    parity, one stop bit settings that are the default.
-    __CAUTION!__ The HC-05 supports many serial configurations that are not
-    compatible with an Arduino. For example, the Arduino software serial
-    port port supports only no parity, one stop bit settings.
+##### `setBaud(unsigned long rate)`
+Specify the HC-05 communications speed. The speed is non-volatile so
+call this only when the rate returned by findBaud() is not the one
+you require.
 
-`cmd()`
-    Send a command to the module. The 'key' (cmdPin) pin is activated to
-    put the module in command mode where 'AT' commands are recognized.
+##### `setBaud(unsigned long rate, unsigned long parity, unsigned long stopbits)`
+Use this method when you need something besides the default no
+parity, one stop bit settings that are the default.
+__CAUTION!__ The HC-05 supports many serial configurations that are not
+compatible with an Arduino. For example, the Arduino software serial
+port port supports only no parity, one stop bit settings.
 
-`cmdMode2Start(int pwrPin)`
-   This is an alternate command mode. This 2nd command mode has the
-   advantage forcing the HC-05 into a know communications speed: 38400.
-   However, entering this 2nd command mode requires switching the power
-   to the HC-05.
+##### `cmd()`
+Send a command to the module. The 'key' (cmdPin) pin is activated to
+put the module in command mode where 'AT' commands are recognized.
 
-`cmdMode2End()`
+##### `cmdMode2Start(int pwrPin)`
+This is an alternate command mode. This 2nd command mode has the
+advantage forcing the HC-05 into a know communications speed: 38400.
+However, entering this 2nd command mode requires switching the power
+to the HC-05.
+
+##### `cmdMode2End()`
    Exits the alternate command mode, leaving the power to the HC-05 on.
 
-`connected()` (Only if HC05_STATE_PIN is defined in `HC05.h`)
-    Returns true when a BT connection has been established.
+##### `connected()` (Only if HC05_STATE_PIN is defined in `HC05.h`)
+Returns true when a BT connection has been established.
 
-`write()`
-`print*()`
-    The write(), and print*(), methods block until there is a BT
-    connection.
+##### `write()`
+##### `print*()`
+The `write()`, and `print*()`, methods block until there is a BT
+connection.
 
 Example Programs
 ----------------
@@ -103,7 +104,7 @@ See the `SoftwareSerial.fzz` file for the proper default connections.
 
 Installation
 ------------
-###Option 1: Git (Recommended)
+### Option 1: Git (Recommended)
 * Follow this [GitHub repository](https://github.com/jdunmire/HC05)
   and use `git` to track your own changes by cloning:
 
@@ -113,7 +114,7 @@ Installation
 * Start the Arduino IDE and you should find `HC05` in the
   libraries section.
 
-###Option 2: Source only
+### Option 2: Source only
 * Download a ZIP file. The ZIP button at
   [GitHub](https://github.com/jdunmire/HC05) will always get the
   latest version, but you may prefer one of the
